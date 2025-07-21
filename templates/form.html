@@ -5,6 +5,29 @@
     <title>QSO 查询</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+<body>
+    <h2>QSO ID 查询 QRZ 信息</h2>
+    <form method="post">
+        <label for="username">QRZ Username:</label>
+        <input type="text" id="username" name="username" required value="{{ username if username else '' }}">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required value="{{ password if password else '' }}">
+
+        <label for="qso_id">QSO ID:</label>
+        <input type="text" id="qso_id" name="qso_id" required value="{{ qso_id if qso_id else '' }}">
+
+        <button type="submit">查询</button>
+    </form>
+
+    <h3>实时日志输出</h3>
+    <pre id="logArea" style="height: 300px; overflow-y: scroll; background: #f0f0f0; padding: 10px; border-radius: 6px;"></pre>
+
+    {% if result is not none %}
+        <h3>查询结果</h3>
+        <pre>{{ result }}</pre>
+    {% endif %}
+</body>
 <script>
     let ws;
     const logArea = document.getElementById("logArea");
@@ -26,30 +49,6 @@
         };
     }
 
-    window.onload = () => {
-        setupWebSocket();
-    };
+    window.addEventListener("load", setupWebSocket);
 </script>
-<body>
-    <h2>QSO ID 查询 QRZ 信息</h2>
-    <form method="post">
-        <label for="username">QRZ Username:</label>
-        <input type="text" id="username" name="username" required value="{{ username if username else '' }}">
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required value="{{ password if password else '' }}">
-
-        <label for="qso_id">QSO ID:</label>
-        <input type="text" id="qso_id" name="qso_id" required value="{{ qso_id if qso_id else '' }}">
-
-        <button type="submit">查询</button>
-    </form>
-
-    {% if result is not none %}
-        <h3>实时日志输出</h3>
-        <pre id="logArea" style="height: 200px; overflow-y: scroll; background: #f0f0f0; padding: 10px;"></pre>
-        <h3>查询结果</h3>
-        <pre>{{ result }}</pre>
-    {% endif %}
-</body>
 </html>

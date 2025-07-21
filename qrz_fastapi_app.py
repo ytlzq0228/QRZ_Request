@@ -6,6 +6,7 @@ import uvicorn
 import sys
 import os
 import asyncio
+import builtins
 
 # Add path to QRZ_Request module
 sys.path.append("/mnt/data/app")
@@ -17,6 +18,28 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 clients = set()
+log_queue = asyncio.Queue()
+
+# 替换全局 print 为写入 log_queue
+original_print = print
+
+def hooked_print(*args, **kwargs):
+    msg = ' '.join(str(a) for a in args)
+    try:
+        asyncio.create_task(log_queue.put(msg))
+    except RuntimeError:
+        pass  # 在事件循环外不处理
+    original_print(*args, **kwargs)
+
+builtins.print = hooked_print
+
+@app.on_event("startup")
+async def start_log_dispatcher():
+    async def dispatch_logs():
+        while True:
+            msg = await log_queue.get()
+            await broadcast(msg)
+    asyncio.create_task(dispatch_logs())
 
 @app.get("/", response_class=HTMLResponse)
 async def form_get(request: Request):
@@ -48,21 +71,10 @@ async def post_form(
     password: str = Form(...),
     qso_id: str = Form(...)
 ):
-    import builtins
-    original_print = print
-
-    async def async_print(*args, **kwargs):
-        msg = ' '.join(str(a) for a in args)
-        await broadcast(msg)
-        original_print(*args, **kwargs)
-
     try:
-        builtins.print = lambda *a, **k: asyncio.create_task(async_print(*a, **k))
         result = check_qrz_request(username=username, password=password, qso_id=qso_id)
     except Exception as e:
         result = f"查询失败: {str(e)}"
-    finally:
-        builtins.print = original_print
 
     return templates.TemplateResponse("form.html", {
         "request": request,
