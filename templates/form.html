@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QSO 查询</title>
+</head>
+<body>
+    <h2>QSO ID 查询 QRZ 信息</h2>
+    <form method="post">
+        <label for="username">QRZ Username:</label>
+        <label for="password">Password:</label>
+        <label for="qso_id">QSO ID:</label>
+        <input type="text" id="qso_id" name="qso_id" required>
+        <button type="submit">查询</button>
+    </form>
+
+    {% if result is not none %}
+        <h3>查询结果</h3>
+        <pre>{{ result }}</pre>
+    {% endif %}
+</body>
+</html>
