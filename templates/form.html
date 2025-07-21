@@ -5,6 +5,16 @@
     <title>QSO 查询</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+<script>
+    const logArea = document.getElementById("logArea");
+    const ws = new WebSocket(`ws://${location.host}/ws/logs`);
+
+    ws.onmessage = function(event) {
+        const newLine = document.createTextNode(event.data + "\\n");
+        logArea.appendChild(newLine);
+        logArea.scrollTop = logArea.scrollHeight;
+    };
+</script>
 <body>
     <h2>QSO ID 查询 QRZ 信息</h2>
     <form method="post">
@@ -21,6 +31,8 @@
     </form>
 
     {% if result is not none %}
+        <h3>实时日志输出</h3>
+        <pre id="logArea" style="height: 200px; overflow-y: scroll; background: #f0f0f0; padding: 10px;"></pre>
         <h3>查询结果</h3>
         <pre>{{ result }}</pre>
     {% endif %}
