@@ -55,7 +55,7 @@ def login(username,password):
 	else:
 		return session
 
-def deal_request_qsl(session,qso_id,qso_with,qso_start_date):
+def deal_request_qsl(username,session,qso_id,qso_with,qso_start_date):
 	try:
 		band_list=['20m','15m','10m','12m','30m','40m','17m','80m','6m','70cm']
 		time_list = [
