@@ -6,13 +6,28 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <script>
+    let ws;
     const logArea = document.getElementById("logArea");
-    const ws = new WebSocket(`ws://${location.host}/ws/logs`);
 
-    ws.onmessage = function(event) {
-        const newLine = document.createTextNode(event.data + "\\n");
-        logArea.appendChild(newLine);
-        logArea.scrollTop = logArea.scrollHeight;
+    function setupWebSocket() {
+        ws = new WebSocket(`ws://${location.host}/ws/logs`);
+        ws.onmessage = function(event) {
+            const line = document.createTextNode(event.data + "\\n");
+            logArea.appendChild(line);
+            logArea.scrollTop = logArea.scrollHeight;
+        };
+        ws.onclose = function() {
+            const line = document.createTextNode("[WebSocket closed]\\n");
+            logArea.appendChild(line);
+        };
+        ws.onerror = function() {
+            const line = document.createTextNode("[WebSocket error]\\n");
+            logArea.appendChild(line);
+        };
+    }
+
+    window.onload = () => {
+        setupWebSocket();
     };
 </script>
 <body>
