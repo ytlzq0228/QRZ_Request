@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 import sys
 import os
+import io
+import contextlib
 
 # Add path to QRZ_Request module
 sys.path.append("/mnt/data/app")
@@ -28,7 +30,11 @@ async def post_form(
     qso_id: str = Form(...)
 ):
     try:
-        result = check_qrz_request(username=username, password=password,qso_id=qso_id)
+        output_buffer = io.StringIO()
+        with contextlib.redirect_stdout(output_buffer):
+            result = check_qrz_request(username=username, password=password, qso_id=qso_id)
+        logs = output_buffer.getvalue()
+        result = f"{logs}\n\n{result}"
     except Exception as e:
         result = f"查询失败: {str(e)}"
 
