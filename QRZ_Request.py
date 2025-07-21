@@ -68,7 +68,7 @@ def deal_request_qsl(session,qso_id,qso_with,qso_start_date):
 		]
 		for band in band_list:
 			for time in time_list:
-				getUrl='https://logbook.qrz.com/?op=chconf;call1=BI1FQO;call2=%s;band1=%s;band2=%s;mode1=FT8;mode2=FT8;start_date=%s;start_time=%s;prop_mode=;originqso=%s'%(qso_with,band,band,qso_start_date,time,qso_id)
+				getUrl='https://logbook.qrz.com/?op=chconf;call1=%s;call2=%s;band1=%s;band2=%s;mode1=FT8;mode2=FT8;start_date=%s;start_time=%s;prop_mode=;originqso=%s'%(username,qso_with,band,band,qso_start_date,time,qso_id)
 				response1 = session.get(getUrl, headers=USER_HEADER)
 				result=json.loads(response1.text)
 				result['band']=band
@@ -112,7 +112,7 @@ def check_qrz_request(username,password,qso_id):
 	try:
 		session=login(username,password)
 		qso_with,qso_start_date=get_request_info(session,qso_id)
-		result=deal_request_qsl(session,qso_id,qso_with,qso_start_date)
+		result=deal_request_qsl(username,session,qso_id,qso_with,qso_start_date)
 		return result
 	except Exception as err:
 		raise err
