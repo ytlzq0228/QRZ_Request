@@ -21,12 +21,23 @@ async def form_get(request: Request):
     return templates.TemplateResponse("form.html", {"request": request, "result": None})
 
 @app.post("/", response_class=HTMLResponse)
-async def form_post(request: Request, qso_id: str = Form(...)):
+async def post_form(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+    qso_id: str = Form(...)
+):
     try:
-        result = check_qrz_request(username,password,qso_id)
+        result = query_qrz_by_qso_id(qso_id, username=username, password=password)
     except Exception as e:
-        result = f"Error: {str(e)}"
-    return templates.TemplateResponse("form.html", {"request": request, "result": result, "qso_id": qso_id})
+        result = f"查询失败: {str(e)}"
 
+    return templates.TemplateResponse("form.html", {
+        "request": request,
+        "qso_id": qso_id,
+        "username": username,
+        "password": password,
+        "result": result
+    })
 # 启动命令（使用时运行）：
 # uvicorn qrz_fastapi_app:app --reload --host 0.0.0.0 --port 8000
