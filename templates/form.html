@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>QSO 查询</title>
     <meta charset="utf-8">
+    <title>QSO 查询</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h2>QSO ID 查询 QRZ 信息</h2>
     <form method="post">
         <label for="username">QRZ Username:</label>
+        <input type="text" id="username" name="username" required value="{{ username if username else '' }}">
+
         <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required value="{{ password if password else '' }}">
+
         <label for="qso_id">QSO ID:</label>
-        <input type="text" id="qso_id" name="qso_id" required>
+        <input type="text" id="qso_id" name="qso_id" required value="{{ qso_id if qso_id else '' }}">
+
         <button type="submit">查询</button>
     </form>
 
