@@ -28,7 +28,7 @@ async def post_form(
     qso_id: str = Form(...)
 ):
     try:
-        result = query_qrz_by_qso_id(qso_id, username=username, password=password)
+        result = check_qrz_request(qso_id, username=username, password=password)
     except Exception as e:
         result = f"查询失败: {str(e)}"
 
