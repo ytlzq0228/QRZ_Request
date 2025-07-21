@@ -35,6 +35,21 @@ def login(username,password):
 			'flush': '0'
 		}
 		login_resp=session.post(postUrl, data=postdata1, headers=USER_HEADER)
+		content = login_resp.text
+
+		# 判断登录是否失败（通过页面中出现的典型提示）
+		if "Authentication error" in content or "We could not log you in" in content:
+			raise ValueError("Login failed: Invalid username or password")
+
+		# 判断登录是否成功（通过页面中出现的“Login Successful”或meta refresh）
+		if "Login Successful" in content or 'http-equiv="refresh"' in content:
+			print("Login successful")
+			return session
+
+		# 默认也处理未知状态为失败
+		raise ValueError("Login failed: Unexpected response from QRZ")
+	except Exception as err:
+		raise err
 	except Exception as err:
 		raise err
 	else:
