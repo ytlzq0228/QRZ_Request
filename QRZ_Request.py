@@ -68,6 +68,7 @@ def deal_request_qsl(session,qso_id,qso_with,qso_start_date):
 		
 		print(qso_with,qso_start_date)
 		print("找到啦！！！")
+		return result
 	except Exception as err:
 		raise err
 def get_request_info(session,qso_id):
@@ -96,8 +97,8 @@ def check_qrz_request(username,password,qso_id):
 	try:
 		session=login(username,password)
 		qso_with,qso_start_date=get_request_info(session,qso_id)
-		deal_request_qsl(session,qso_id,qso_with,qso_start_date)
-		
+		result=deal_request_qsl(session,qso_id,qso_with,qso_start_date)
+		return result
 	except Exception as err:
 		raise err
 
