@@ -83,7 +83,8 @@ def deal_request_qsl(username,session,qso_id,qso_with,qso_start_date):
 						break
 				if result['conf']=='1':
 					break
-			
+			if result['conf']=='1':
+				break
 			print(qso_with,qso_start_date)
 			print("找到啦！！！")
 			return result
