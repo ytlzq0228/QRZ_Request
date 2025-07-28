@@ -57,33 +57,36 @@ def login(username,password):
 
 def deal_request_qsl(username,session,qso_id,qso_with,qso_start_date):
 	try:
-		band_list=['20m','15m','10m','12m','30m','40m','17m','80m','6m','70cm']
-		time_list = [
-    		'00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',
-    		'04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',
-    		'08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    		'12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
-    		'16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
-    		'20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30','24:00'
-		]
-		for band in band_list:
-			for time in time_list:
-				getUrl='https://logbook.qrz.com/?op=chconf;call1=%s;call2=%s;band1=%s;band2=%s;mode1=FT8;mode2=FT8;start_date=%s;start_time=%s;prop_mode=;originqso=%s'%(username,qso_with,band,band,qso_start_date,time,qso_id)
-				response1 = session.get(getUrl, headers=USER_HEADER)
-				result=json.loads(response1.text)
-				result['band']=band
-				result['time']=time
-				result['date']=qso_start_date
-				result['callsign']=qso_with
-				print(result)
+		mode_list=['FT8','DMR','FM']
+		for mode in mode_list:
+			band_list=['20m','15m','10m','12m','30m','40m','17m','80m','6m','70cm']
+			time_list = [
+    			'00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',
+    			'04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',
+    			'08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+    			'12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+    			'16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
+    			'20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30','24:00'
+			]
+			for band in band_list:
+				for time in time_list:
+					getUrl=f'https://logbook.qrz.com/?op=chconf;call1={username};call2={qso_with};band1={band};band2={band};mode1={mode};mode2={mode};start_date={qso_start_date};start_time={time};prop_mode=;originqso={qso_id}'
+					response1 = session.get(getUrl, headers=USER_HEADER)
+					result=json.loads(response1.text)
+					result['band']=band
+					result['time']=time
+					result['date']=qso_start_date
+					result['callsign']=qso_with
+					result['mode']=mode
+					print(result)
+					if result['conf']=='1':
+						break
 				if result['conf']=='1':
 					break
-			if result['conf']=='1':
-				break
-		
-		print(qso_with,qso_start_date)
-		print("找到啦！！！")
-		return result
+			
+			print(qso_with,qso_start_date)
+			print("找到啦！！！")
+			return result
 	except Exception as err:
 		raise err
 def get_request_info(session,qso_id):
